@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const path = require("path")
 const {open} = require("sqlite")
@@ -10,6 +11,7 @@ const dbPath = path.join(__dirname,"travelDiary.db")
 let db = null 
 const app = express();
 app.use(express.json())
+const jwtTokenFromEnv = process.env.CLIENT_JWT_TOKEN
 
 const initializeDbandServer = async () => {
     try{
@@ -32,12 +34,13 @@ initializeDbandServer()
 
 //Middleware function
 const authenticateJwtToken = (request,response, next) => {
-    let jwtToken
-    const authorizationHeaders = request.headers["authorization"]
+    let jwtToken = jwtTokenFromEnv
+    // const authorizationHeaders = request.headers["authorization"]
     
-    if (authorizationHeaders) {
-        jwtToken = authorizationHeaders.split(" ")[1]
-    }
+    // if (authorizationHeaders) {
+    //     jwtToken = authorizationHeaders.split(" ")[1]  //Since we are getting token key from environment variables 
+    // }
+    // console.log(jwtToken)
     if (jwtToken === undefined) {
         response.status = 401 
         response.send("Invalid JWT Token")
